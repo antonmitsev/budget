@@ -6,10 +6,24 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./home.component.scss']
 })
 export class HomeComponent implements OnInit {
+  public amountTotal = 0;
+  public amount = 0;
+  public amountField;
+  
+  
 
   constructor() { }
 
-  ngOnInit() {
+  public ngOnInit() {
+  }
+
+  public add() {
+    console.log(this.amountField);
+    this.amountTotal += this.amountField.value;
+  }
+
+  public sub() {
+
   }
 
 }

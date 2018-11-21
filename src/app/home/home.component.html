@@ -1,3 +1,14 @@
-<p>
-  home works!
-</p>
+<h1>Expense/Earning</h1>
+<input readonly value="{{ amountTotal }}">
+<input name="amount" #amountField>
+<select name="direction">
+  <option value="">-- Please choose --</option>
+  <option value="personal">Personal</option>
+  <option value="bills">Bills</option>
+  <option value="home">Home</option>
+</select>
+
+<div class="buttons">
+  <a (click)="add()">(+) EARNED</a>
+  <a (click)="sub()">(-) SPENT</a>
+</div>
