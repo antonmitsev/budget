@@ -1,13 +1,13 @@
 <h1>Expense/Earning</h1>
 <input readonly value="{{ amountTotal }}">
-<input name="amount" #amountField>
-<select name="direction">
-  <option value="">-- Please choose --</option>
-  <option value="personal">Personal</option>
-  <option value="bills">Bills</option>
-  <option value="home">Home</option>
-</select>
+<input name="amount" [(ngModel)]="amount">
 
+<select name="direction" [(ngModel)]="direction">
+  <option value="">-- Please choose --</option>
+  <option *ngFor="let key of keys" value="{{ key }}">{{ directions[key] }}</option>
+
+</select>
+<p>Direction: {{direction}}</p>
 <div class="buttons">
   <a (click)="add()">(+) EARNED</a>
   <a (click)="sub()">(-) SPENT</a>
