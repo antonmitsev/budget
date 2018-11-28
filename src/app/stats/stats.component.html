@@ -1,3 +1,10 @@
-<p>
-  stats works!
-</p>
+  <table>
+    <tbody *ngFor="let stat of stats">
+        <tr *ngFor="let statRecord of stat.records">
+          <td>{{statRecord.ts | date:"MM/dd/yy" }}</td>
+          <td>{{statRecord.amount}}</td>
+        </tr>
+    </tbody>
+    
+  </table>
+

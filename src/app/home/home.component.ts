@@ -1,34 +1,52 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { HttpClient } from "@angular/common/http";
+import { directionsKeys } from '../data/data';
+import { getKey, initLocalStorage } from '../common/helpers';
 
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss']
 })
-export class HomeComponent implements OnInit {
+export class HomeComponent implements OnInit, OnDestroy {
   public amountTotal = 0;
   public amount: string;
   public direction: string;
-  public directions = {
-    'personal': 'Personal',
-    'bills': 'Bills',
-    'home': 'Home',
-  };
+  public directions = directionsKeys;
   public keys = Object.keys(this.directions);
 
   constructor(private http: HttpClient) { }
 
+  public ngOnDestroy() {
+    this.keys.forEach(
+      (k) => {
+        const key = getKey(k);
+
+        this.http.patch(
+          'http://localhost:3000/' + key,
+          {
+            value: localStorage.getItem(key)
+          }
+        ).subscribe(
+          (result) => {
+            console.log(result);
+          }
+        )
+      });
+  }
+
   public ngOnInit() {
     this.keys.forEach(
       (k) => {
-        const key = this.getKey(k);
-        
+        const key = getKey(k);
+
         this.http.get(
           'http://localhost:3000/' + key
         ).subscribe(
           (result) => {
-            return console.log(result);
+            initLocalStorage(key, result['value']);
+
+            // this.amountTotal += Number(result['value']);
           }
         )
 
@@ -51,17 +69,12 @@ export class HomeComponent implements OnInit {
     this.save(this.direction, -amount);
   }
 
-  protected getKey(k: string): string {
-    const d = new Date();
-    const yyyymm = d.getFullYear() * 100 + d.getMonth() + 1;
-    const key = yyyymm + '_' + k;
-    return key;
-  }
-
   public save(k: string, val: number) {
     let currentValue = 0;
-    const key = this.getKey(k);
+    const key = getKey(k);
 
+    this.addRecord(key, val);
+    
     if (localStorage.getItem(key)) {
       currentValue = Number(localStorage.getItem(key)) + val;
     } else {
@@ -76,5 +89,19 @@ export class HomeComponent implements OnInit {
     */
 
     localStorage.setItem(key, currentValue.toFixed(2));
+  }
+
+  public addRecord(key: string, val: number){
+    const recordKey = new Date().getTime();
+    this.http.patch(
+      'http://localhost:3000/' + key,
+      {
+        [recordKey]: val
+      }
+    ).subscribe(
+      (result) => {
+        console.log(result);
+      }
+    )
   }
 }
